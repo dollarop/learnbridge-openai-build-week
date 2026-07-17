@@ -1533,8 +1533,17 @@ body:not(.kid-mode) #playPanel {
   display: none;
 }
 
-.tab[data-tab="tools"] {
+.tab[data-tab="tools"],
+.tab[data-tab="clinic"],
+.tab[data-tab="media"],
+#clinicPanel,
+#mediaPanel {
   display: none;
+}
+
+label[for="answerInput"],
+#answerInput {
+  display: none !important;
 }
 
 body.kid-mode .control-panel,
@@ -2317,6 +2326,16 @@ body.tools-open #toolsToggle {
   transform: translateY(-2px);
 }
 
+.listen-section-btn.playing {
+  background: linear-gradient(135deg, var(--leaf), var(--teal));
+  box-shadow: 0 0 0 4px rgba(80, 184, 147, .16), 0 10px 24px rgba(19, 31, 49, .18);
+}
+
+.listen-section-btn.paused {
+  color: var(--ink);
+  background: var(--gold);
+}
+
 .listen-enabled {
   position: relative;
   padding-right: max(var(--listen-pad, 0px), 48px);
@@ -2652,6 +2671,18 @@ body.tools-open #toolsToggle {
 .media-layout {
   display: grid;
   gap: 16px;
+}
+
+.integrated-media-section,
+.integrated-mindmap-section {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.integrated-media-section .panel-head,
+.integrated-mindmap-section .panel-head {
+  margin-bottom: 12px;
 }
 
 .visual-board {

@@ -89,7 +89,9 @@ const tabIcons = {
   planner: "◷"
 };
 
-const demoTabSequence = ["understand", "clinic", "proof", "media", "teach"];
+const demoTabSequence = ["understand", "proof", "exam", "teach", "planner"];
+let activeSpeechButton = null;
+let activeSpeechText = "";
 
 const demoScenarios = {
   energy: {
@@ -493,8 +495,8 @@ const uiText = {
     level: "Nivel",
     profile: "Perfil",
     language: "Idioma",
-    tabs: ["Entender", "Niño", "Clínica", "Prueba", "Examen", "Enseñar", "Media", "Jugar", "Herramientas", "Plan"],
-    modules: ["Comprensión adaptable", "Modo niño", "Clínica de malentendidos", "ProofTutor", "Simulador de examen con memoria", "Profesor en caja", "Enciclopedia visual", "Zona de juego", "Espacio de estudio", "Planificador"],
+    tabs: ["Entender", "Niño", "Diagnóstico", "Prueba", "Examen", "Enseñar", "Visuales", "Jugar", "Herramientas", "Plan"],
+    modules: ["Comprensión adaptable", "Modo niño", "Diagnóstico integrado", "Prueba y evidencia", "Simulador de examen con memoria", "Profesor en caja", "Visuales integrados", "Zona de juego", "Espacio de estudio", "Planificador"],
     topEyebrow: "Concepto OpenAI Build Week · Educación",
     stateTitle: "Estado de aprendizaje",
     heroSubtitle: "Tu puente entre preguntar, comprender, practicar y enseñar.",
@@ -601,8 +603,8 @@ const uiText = {
     level: "Level",
     profile: "Learner profile",
     language: "Language",
-    tabs: ["Understand", "Kid", "Clinic", "Proof", "Exam", "Teach", "Media", "Play", "Tools", "Planner"],
-    modules: ["Adaptive Understanding", "Kid Mode", "Misconception Clinic", "ProofTutor", "Exam Simulator With Memory", "Teacher in a Box", "Visual Encyclopedia", "Learning Playground", "Study Workspace", "Learning Planner"]
+    tabs: ["Understand", "Kid", "Diagnosis", "Proof", "Exam", "Teach", "Visuals", "Play", "Tools", "Planner"],
+    modules: ["Adaptive Understanding", "Kid Mode", "Integrated Diagnosis", "Proof and Evidence", "Exam Simulator With Memory", "Teacher in a Box", "Inline Visuals", "Learning Playground", "Study Workspace", "Learning Planner"]
     ,
     topEyebrow: "OpenAI Build Week Concept · Education",
     stateTitle: "Learning state",
@@ -855,9 +857,10 @@ function populateVoices() {
   availableVoices = window.speechSynthesis.getVoices();
   const selected = voiceSelect.value;
   const preferredLang = voiceAccentSelect.value || (isSpanish() ? "es-MX" : "en-US");
-  const options = availableVoices
-    .filter((voice) => !preferredLang || voice.lang.toLowerCase().startsWith(preferredLang.slice(0, 2).toLowerCase()))
-    .concat(availableVoices.filter((voice) => preferredLang && !voice.lang.toLowerCase().startsWith(preferredLang.slice(0, 2).toLowerCase())));
+  const langPrefix = preferredLang.slice(0, 2).toLowerCase();
+  const exact = availableVoices.filter((voice) => voice.lang.toLowerCase().startsWith(preferredLang.toLowerCase()));
+  const sameLanguage = availableVoices.filter((voice) => voice.lang.toLowerCase().startsWith(langPrefix) && !exact.includes(voice));
+  const options = exact.concat(sameLanguage).slice(0, 10);
   voiceSelect.innerHTML = `<option value="">${say("Voz automática", "Automatic voice")}</option>` + options.map((voice) => (
     `<option value="${voice.name}">${voice.name} · ${voice.lang}</option>`
   )).join("");
@@ -895,11 +898,32 @@ function selectedVoice() {
     || null;
 }
 
-function speakText(textToSpeak) {
+function clearSpeechState() {
+  if (activeSpeechButton) {
+    activeSpeechButton.classList.remove("playing", "paused");
+  }
+  activeSpeechButton = null;
+  activeSpeechText = "";
+}
+
+function speakText(textToSpeak, triggerButton = null) {
   if (!voiceAvailable()) return;
   const clean = textToSpeak.replace(/\s+/g, " ").trim();
   if (!clean) return;
+  if (triggerButton && activeSpeechButton === triggerButton && window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+    window.speechSynthesis.pause();
+    triggerButton.classList.add("paused");
+    triggerButton.classList.remove("playing");
+    return;
+  }
+  if (triggerButton && activeSpeechButton === triggerButton && window.speechSynthesis.paused) {
+    window.speechSynthesis.resume();
+    triggerButton.classList.add("playing");
+    triggerButton.classList.remove("paused");
+    return;
+  }
   window.speechSynthesis.cancel();
+  clearSpeechState();
   const utterance = new SpeechSynthesisUtterance(clean.slice(0, 4200));
   const settings = voiceSettings();
   utterance.lang = voiceAccentSelect.value || (isSpanish() ? "es-MX" : "en-US");
@@ -907,6 +931,11 @@ function speakText(textToSpeak) {
   utterance.pitch = settings.pitch;
   const voice = selectedVoice();
   if (voice) utterance.voice = voice;
+  utterance.onend = clearSpeechState;
+  utterance.onerror = clearSpeechState;
+  activeSpeechButton = triggerButton;
+  activeSpeechText = clean;
+  if (triggerButton) triggerButton.classList.add("playing");
   window.speechSynthesis.speak(utterance);
 }
 
@@ -923,8 +952,6 @@ function addSectionListenButtons() {
   document.querySelectorAll(".listen-enabled").forEach((node) => node.classList.remove("listen-enabled"));
   const selectors = [
     "#plainExplanation",
-    "#simpleAnalogy",
-    "#localAnalogy",
     "#learningOSPanel > article",
     "#sourceLedger > article",
     "#readingMap > div",
@@ -943,7 +970,9 @@ function addSectionListenButtons() {
     ".planner-card",
     ".tool-card"
   ];
-  document.querySelectorAll(selectors.join(",")).forEach((block) => {
+  const blocks = Array.from(document.querySelectorAll(selectors.join(",")));
+  const uniqueBlocks = blocks.filter((block) => !blocks.some((other) => other !== block && other.contains(block)));
+  uniqueBlocks.forEach((block) => {
     const spokenText = block.textContent.replace(/\s+/g, " ").trim();
     if (spokenText.length < 24 || block.querySelector(":scope > .listen-section-btn")) return;
     block.classList.add("listen-enabled");
@@ -953,10 +982,33 @@ function addSectionListenButtons() {
     button.textContent = "🔉";
     button.addEventListener("click", (event) => {
       event.stopPropagation();
-      speakText(spokenText);
+      speakText(spokenText, button);
     });
     block.append(button);
   });
+}
+
+function normalizedNodeLink(tab, label) {
+  if (tab === "clinic") return ["proof", say("diagnóstico", "diagnosis")];
+  if (tab === "media") return ["understand", say("visual integrado", "inline visual")];
+  return [tab, label];
+}
+
+function arrangeIntegratedLearningSections() {
+  const understandPanel = document.querySelector("#understandPanel");
+  const teachPanel = document.querySelector("#teachPanel");
+  const mediaLayout = document.querySelector(".media-layout");
+  const mindMapSection = document.querySelector(".mindmap-section");
+  if (understandPanel && mediaLayout && !understandPanel.contains(mediaLayout)) {
+    mediaLayout.classList.add("integrated-media-section");
+    const target = understandPanel.querySelector(".card-grid");
+    target?.insertAdjacentElement("afterend", mediaLayout);
+  }
+  if (teachPanel && mindMapSection && !teachPanel.contains(mindMapSection)) {
+    mindMapSection.classList.add("integrated-mindmap-section");
+    const target = teachPanel.querySelector("#demoScriptOutput");
+    target?.insertAdjacentElement("afterend", mindMapSection);
+  }
 }
 
 function syncVoiceAccentOptions() {
@@ -1490,6 +1542,8 @@ function localizeGeneratedOutput() {
 }
 
 function applyUiLanguage() {
+  if (isSpanish() && !voiceAccentSelect.value.startsWith("es")) voiceAccentSelect.value = "es-MX";
+  if (!isSpanish() && !voiceAccentSelect.value.startsWith("en")) voiceAccentSelect.value = "en-US";
   const ui = currentUi();
   document.documentElement.lang = isSpanish() ? "es" : "en";
   document.querySelector("#toolsPanel").dataset.toolsLabel = say("Herramientas", "Tools");
@@ -1552,6 +1606,7 @@ function applyUiLanguage() {
   document.querySelector("#guidedDemoButton").textContent = ui.guidedDemo || "Start guided demo";
   document.querySelector("#nextDemoStepButton").textContent = ui.nextDemoStep || "Next step";
   renderGuidedDemoStep(guidedDemoIndex, false);
+  arrangeIntegratedLearningSections();
   helpButton.textContent = ui.help || "Help";
   syncVoiceAccentOptions();
   voiceSupportStatus.textContent = voiceAvailable()
@@ -1634,11 +1689,11 @@ function applyUiLanguage() {
   setText('label[for="projectTitleInput"]', "Nombre de la carpeta", "Project folder name");
   setText("#understandPanel .panel-head h3", "Haz una pregunta para empezar.", "Ask a question to begin.");
   setText("#kidPanel .panel-head h3", "Aprendizaje paso a paso con dibujo, palabras simples y misiones.", "Step-by-step learning with drawing, simple words, and playful missions.");
-  setText("#clinicPanel .panel-head h3", "¿Qué entendió realmente el usuario?", "What did the learner really understand?");
-  setText("#proofPanel .panel-head h3", "Hechos, inferencias, confianza y notas de defensa.", "Facts, inferences, confidence, and defense notes.");
+  setText("#clinicPanel .panel-head h3", "Diagnóstico integrado en prueba.", "Diagnosis integrated into proof.");
+  setText("#proofPanel .panel-head h3", "Comprensión, evidencia, confianza y notas de defensa.", "Comprehension, evidence, confidence, and defense notes.");
   setText("#examPanel .panel-head h3", "Preguntas de práctica que recuerdan puntos débiles.", "Practice questions that remember weak points.");
   setText("#teachPanel .panel-head h3", "Convierte la comprensión en una clase para otros.", "Turn understanding into a class for others.");
-  setText("#mediaPanel .panel-head h3", "Imágenes, diagramas, pasos y escenas listas para video.", "Images, diagrams, steps, and video-ready teaching scenes.");
+  setText("#mediaPanel .panel-head h3", "Visuales integrados dentro de la explicación.", "Visuals integrated into the explanation.");
   setText("#toolsPanel .panel-head h3", "Notas, dibujo, calculadora, temporizador e historial.", "Notes, drawing, calculator, timer, and project history.");
   setText("#plannerPanel .panel-head h3", "Ruta aprendida, agenda futura, recordatorios y autoevaluación.", "Learning trail, future schedule, reminders, and self-assessment.");
   setText("#chatToggle", "Preguntar a LearnBridge", "Ask LearnBridge");
@@ -2290,7 +2345,7 @@ function renderScenarioMindMap(scenario) {
   const nodes = scenario.mind;
   const root = nodes[0];
   const branchNodes = nodes.slice(1);
-  const rootLinks = root[2].map(([jump, label]) => `<button xmlns="http://www.w3.org/1999/xhtml" class="node-link" type="button" data-jump="${jump}">${label}</button>`).join("");
+  const rootLinks = root[2].map(([jump, label]) => normalizedNodeLink(jump, label)).map(([jump, label]) => `<button xmlns="http://www.w3.org/1999/xhtml" class="node-link" type="button" data-jump="${jump}">${label}</button>`).join("");
   mindMapOutput.innerHTML = `
     <div class="mind-poster ${layout.className}">
       <svg class="scenario-mind-svg" viewBox="0 0 980 620" role="img" aria-label="${scenario.title} mind map">
@@ -2325,7 +2380,7 @@ function renderScenarioMindMap(scenario) {
         </foreignObject>
         ${layout.branches.map((branch, index) => {
           const node = branchNodes[index];
-          const links = node[2].map(([jump, label]) => `<button xmlns="http://www.w3.org/1999/xhtml" class="node-link" type="button" data-jump="${jump}">${label}</button>`).join("");
+          const links = node[2].map(([jump, label]) => normalizedNodeLink(jump, label)).map(([jump, label]) => `<button xmlns="http://www.w3.org/1999/xhtml" class="node-link" type="button" data-jump="${jump}">${label}</button>`).join("");
           return `
             <foreignObject x="${branch.x}" y="${branch.y}" width="${branch.w}" height="${branch.h}">
               <div xmlns="http://www.w3.org/1999/xhtml" class="mind-fo-card" style="--branch:${branch.color};" contenteditable="true">
@@ -2429,7 +2484,7 @@ function renderScenarioPath(scenario) {
       </ol>
     </article>
   `;
-  document.querySelector("#mediaModeLabel").textContent = `Multimedia: ${scenario.title}`;
+  document.querySelector("#mediaModeLabel").textContent = `${say("Visuales de aprendizaje", "Learning visuals")}: ${scenario.title}`;
   document.querySelector("#mediaCards").innerHTML = scenarioMediaCards(scenario);
   document.querySelector("#storyboardOutput").innerHTML = scenario.storyboard.map(([title, body]) => `
     <article class="story-step"><strong>${title}</strong><p>${body}</p></article>
@@ -2529,7 +2584,7 @@ function renderMedia(topic, material) {
   const kindLabels = isSpanish()
     ? { math: "matemáticas", recipe: "receta", space: "espacio", book: "lectura", general: "general" }
     : { math: "math", recipe: "recipe", space: "space", book: "book", general: "general" };
-  document.querySelector("#mediaModeLabel").textContent = isSpanish() ? `Multimedia: ${kindLabels[kind]}` : `${kindLabels[kind]} media`;
+  document.querySelector("#mediaModeLabel").textContent = isSpanish() ? `Visuales de aprendizaje: ${kindLabels[kind]}` : `Learning visuals: ${kindLabels[kind]}`;
   document.querySelector("#visualBoard").innerHTML = visualSvg(kind, topic);
   const packs = isSpanish() ? {
     math: [
@@ -2669,7 +2724,7 @@ function renderMindMap(topic, material, audience) {
       <strong>${node.title}</strong>
       <p>${node.body}</p>
       <div class="node-links" contenteditable="false">
-        ${node.links.map(([tab, label]) => `<button type="button" class="node-link" data-jump="${tab}">${label}</button>`).join("")}
+        ${node.links.map(([tab, label]) => normalizedNodeLink(tab, label)).map(([tab, label]) => `<button type="button" class="node-link" data-jump="${tab}">${label}</button>`).join("")}
       </div>
     </article>
   `).join("");
@@ -3177,7 +3232,7 @@ function renderDemoSketch(scenario) {
   sketchContext.font = "700 26px Segoe UI, Arial";
   sketchContext.fillText("Next action:", 70, 650);
   sketchContext.font = "23px Segoe UI, Arial";
-  sketchContext.fillText("Use Proof + Media + Teach tabs to turn this into a defensible learning pack.", 230, 650);
+  sketchContext.fillText("Use Proof + Teach to turn this into a defensible learning pack with inline visuals.", 230, 650);
 }
 
 function saveSketch() {
@@ -3248,6 +3303,7 @@ voiceToneSelect.addEventListener("change", applyUiLanguage);
 speakPageButton.addEventListener("click", () => speakText(currentNarrationText()));
 stopSpeechButton.addEventListener("click", () => {
   if (voiceAvailable()) window.speechSynthesis.cancel();
+  clearSpeechState();
 });
 voiceInputButton.addEventListener("click", startVoiceInput);
 audioToggle.addEventListener("click", () => {
