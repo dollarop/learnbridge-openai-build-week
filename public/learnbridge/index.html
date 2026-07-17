@@ -1,0 +1,752 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LearnBridge</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="language-ribbon" aria-label="Elegir idioma de trabajo">
+      <span>Idioma de trabajo</span>
+      <div class="language-buttons">
+        <button class="language-chip" type="button" data-language="Spanish" aria-pressed="true">Español</button>
+        <button class="language-chip" type="button" data-language="English" aria-pressed="false">English</button>
+        <button id="helpButton" class="secondary help-button" type="button">Ayuda</button>
+      </div>
+    </section>
+
+    <select id="languageSelect" hidden aria-hidden="true">
+      <option value="Spanish" selected>Spanish</option>
+      <option value="English">English</option>
+    </select>
+
+    <section class="account-ribbon" aria-label="Cuenta local y repositorio de proyectos">
+      <div class="account-fields">
+        <label for="usernameInput">Usuario local</label>
+        <input id="usernameInput" value="Alberto" autocomplete="username">
+        <label for="passwordInput">Contraseña</label>
+        <input id="passwordInput" type="password" value="demo-only" autocomplete="current-password">
+        <button id="loginButton" type="button">Abrir espacio</button>
+      </div>
+      <p id="accountStatus">Cuenta local de demo. La versión final debe usar autenticación segura.</p>
+    </section>
+
+    <header class="topbar">
+      <div class="hero-copy">
+        <p class="eyebrow">OpenAI Build Week concept · Education</p>
+        <h1>LearnBridge</h1>
+        <p class="hero-subtitle">Tu puente entre preguntar, comprender, practicar y enseñar.</p>
+        <div class="hero-badges" aria-label="Capacidades principales">
+          <span>Voz</span>
+          <span>Mapas</span>
+          <span>Fuentes</span>
+          <span>Notas</span>
+          <span>Modo niño</span>
+        </div>
+      </div>
+      <div class="status-card">
+        <span>Estado de aprendizaje</span>
+        <strong id="stateLabel">Listo</strong>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="orbit-card card-a">
+          <span>1</span>
+          <strong>Entiende</strong>
+        </div>
+        <div class="orbit-card card-b">
+          <span>2</span>
+          <strong>Practica</strong>
+        </div>
+        <div class="orbit-card card-c">
+          <span>3</span>
+          <strong>Enseña</strong>
+        </div>
+        <div class="learning-orb">
+          <span></span>
+        </div>
+      </div>
+    </header>
+
+    <section class="devpost-pitch" aria-label="Presentación Devpost">
+      <div>
+        <p class="eyebrow">Pitch Devpost</p>
+        <h2>Un sistema operativo de aprendizaje, no otro chatbot de tareas.</h2>
+        <p>LearnBridge convierte una pregunta, libro, archivo o meta en un espacio persistente para entender, diagnosticar, practicar, comprobar, guardar, planear y enseñar.</p>
+      </div>
+      <div class="pitch-grid">
+        <article>
+          <span>Problema</span>
+          <p>La gente recibe respuestas, pero no siempre entiende, recuerda, demuestra ni puede enseñar lo aprendido.</p>
+        </article>
+        <article>
+          <span>Solución</span>
+          <p>Una ruta completa con fuentes, comprensión, notas, visuales, examen, calendario y paquete exportable.</p>
+        </article>
+        <article>
+          <span>GPT + Codex</span>
+          <p>GPT adapta la explicación y Codex arma la experiencia runnable, el flujo, la interfaz y la demo.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="start-screen" aria-label="Inicio rápido">
+      <div>
+        <p class="eyebrow">Empieza aquí</p>
+        <h2>¿Qué quieres aprender, entender, practicar o enseñar hoy?</h2>
+        <textarea id="quickStartInput" rows="3" placeholder="Ejemplo: transición energética, desinformación electoral, IA en salud o preparar un examen de física..."></textarea>
+        <div class="prompt-suggestions" aria-label="Ejemplos de consulta">
+          <button type="button" data-prompt="Explain the energy transition with grid, storage, nuclear, sources, and a visual map.">Energía</button>
+          <button type="button" data-prompt="Explain how misinformation spreads during elections with source checks and a classroom activity.">Desinformación</button>
+          <button type="button" data-prompt="Explain AI in healthcare: promise, risk, bias, regulation, and a teachable framework.">IA en salud</button>
+        </div>
+      </div>
+      <div class="start-actions">
+        <label class="demo-picker-label" for="demoScenarioSelect">Demo topic</label>
+        <select id="demoScenarioSelect">
+          <option value="energy">Energy Transition</option>
+          <option value="misinformation">Election Misinformation</option>
+          <option value="healthcare-ai">AI in Healthcare</option>
+        </select>
+        <button id="quickStartButton" type="button">Iniciar sesión de aprendizaje</button>
+        <button id="winningDemoButton" type="button">Cargar demo</button>
+        <button id="exportButton" class="secondary" type="button">Exportar paquete</button>
+        <button id="shareButton" class="secondary" type="button">Compartir enlace</button>
+      </div>
+    </section>
+
+    <section class="landing-showcase" aria-label="Resumen visual del ecosistema">
+      <article class="showcase-card primary">
+        <span class="showcase-icon" aria-hidden="true">◎</span>
+        <div>
+          <strong>Aprende desde una sola pregunta</strong>
+          <p>La app convierte cualquier tema, libro, archivo o meta en una ruta completa con fuentes, voz, mapas y práctica.</p>
+        </div>
+      </article>
+      <article class="showcase-card">
+        <span class="showcase-icon" aria-hidden="true">◌</span>
+        <div>
+          <strong>Comprueba comprensión</strong>
+          <p>No solo resume: pregunta, detecta huecos, contrasta mitos y exige explicar con palabras propias.</p>
+        </div>
+      </article>
+      <article class="showcase-card">
+        <span class="showcase-icon" aria-hidden="true">◇</span>
+        <div>
+          <strong>Produce material reusable</strong>
+          <p>Notas, dibujos, calculadora, calendario, clase final y paquete exportable viven dentro del proyecto.</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="competitive-edge" aria-label="Ventaja competitiva">
+      <div class="edge-head">
+        <p class="eyebrow">Ventaja para jurado</p>
+        <h2>Lo que LearnBridge hace distinto</h2>
+        <p>No compite como otro generador de flashcards: convierte cualquier tema en un proyecto verificable, practicable, narrable y enseñable.</p>
+      </div>
+      <div class="edge-grid">
+        <article><span>01</span><strong>Comprensión primero</strong><p>Diagnostica qué entendiste antes de avanzar.</p></article>
+        <article><span>02</span><strong>Aprender para enseñar</strong><p>Convierte el estudio en clase, rúbrica o taller.</p></article>
+        <article><span>03</span><strong>Perfiles reales</strong><p>Cambia profundidad, interfaz y herramientas por usuario.</p></article>
+        <article><span>04</span><strong>Radar de mitos</strong><p>Contrasta evidencia, rumores, exageraciones y medias verdades.</p></article>
+        <article><span>05</span><strong>Mapa editable</strong><p>Nodos interactivos para explorar, practicar y verificar.</p></article>
+        <article><span>06</span><strong>Workspace persistente</strong><p>Notas, dibujos, agenda, calculadoras e historial por proyecto.</p></article>
+        <article><span>07</span><strong>Multimodal</strong><p>Texto, voz, visuales, práctica, examen y paquete compartible.</p></article>
+      </div>
+    </section>
+
+    <section class="maturity-strip" aria-label="Madurez del producto">
+      <article>
+        <strong>Sources</strong>
+        <p>Source ledger, evidence labels, myth contrast and export history.</p>
+      </article>
+      <article>
+        <strong>Audio</strong>
+        <p>Voice narration, dictation-ready chat and accessibility controls.</p>
+      </article>
+      <article>
+        <strong>Practice</strong>
+        <p>Exam memory, flashcard-style drills and teach-back checks.</p>
+      </article>
+      <article>
+        <strong>Fast Solve</strong>
+        <p>Quick answer first, then proof, map, practice and lesson pack.</p>
+      </article>
+    </section>
+
+    <section class="voice-console" aria-label="Voz y accesibilidad">
+      <div>
+        <p class="eyebrow">Voz accesible</p>
+        <h3>Escucha, dicta y estudia sin depender solo de la pantalla.</h3>
+        <p id="voiceSupportStatus">La narración usa las voces disponibles en este navegador.</p>
+      </div>
+      <div class="voice-grid">
+        <label for="voiceSelect">Voz</label>
+        <select id="voiceSelect">
+          <option value="">Voz automática</option>
+        </select>
+        <label for="voiceAccentSelect">Acento</label>
+        <select id="voiceAccentSelect">
+          <option value="es-MX">Español México</option>
+          <option value="es-ES">Español España</option>
+          <option value="en-US">English US</option>
+          <option value="en-GB">English UK</option>
+        </select>
+        <label for="voiceToneSelect">Tono</label>
+        <select id="voiceToneSelect">
+          <option value="neutral">Neutral</option>
+          <option value="teacher">Profesor</option>
+          <option value="warm">Cálido</option>
+          <option value="child">Infantil</option>
+        </select>
+        <label for="voiceRateInput">Velocidad</label>
+        <input id="voiceRateInput" type="range" min="0.65" max="1.45" step="0.05" value="1">
+        <label for="voicePitchInput">Entonación</label>
+        <input id="voicePitchInput" type="range" min="0.75" max="1.35" step="0.05" value="1">
+      </div>
+      <div class="voice-actions">
+        <label class="toggle-line">
+          <input id="autoSpeakToggle" type="checkbox">
+          <span>Narrar respuestas automáticamente</span>
+        </label>
+        <button id="speakPageButton" type="button">Escuchar explicación</button>
+        <button id="voiceInputButton" class="secondary" type="button">Dictar al chat</button>
+        <button id="stopSpeechButton" class="secondary" type="button">Detener voz</button>
+      </div>
+    </section>
+
+    <section class="intro">
+      <div>
+        <h2>De la duda al dominio: entiende, practica, guarda y enseña.</h2>
+        <p>LearnBridge convierte una pregunta, archivo o meta en un espacio completo de aprendizaje: comprensión, multimedia, chat, práctica, notas, planeación y enseñanza.</p>
+      </div>
+      <button id="sampleButton" type="button">Cargar ejemplo</button>
+    </section>
+
+    <section class="defense-strip" aria-label="Diferenciación del producto">
+      <article>
+        <span>1</span>
+        <strong>No solo respuestas</strong>
+        <p>Convierte un tema en un espacio reutilizable con memoria, notas, multimedia, práctica y explicación final.</p>
+      </article>
+      <article>
+        <span>2</span>
+        <strong>Adaptado por rol</strong>
+        <p>Niño, adulto casual, estudiante, profesor, académico, técnico, negocio, creativo y casa trabajan distinto.</p>
+      </article>
+      <article>
+        <span>3</span>
+        <strong>Primero comprensión</strong>
+        <p>Diagnostica lo que el usuario entendió, detecta malentendidos y pide probar o enseñar la idea.</p>
+      </article>
+      <article>
+        <span>4</span>
+        <strong>Fuente + usuario</strong>
+        <p>Combina archivos cargados con notas, dibujos, temporizador, recordatorios y repositorio de proyectos.</p>
+      </article>
+    </section>
+
+    <section class="jury-demo" aria-label="Vista guiada para jurado">
+      <div>
+        <p class="eyebrow">Demo para jurado</p>
+        <h2>Recorrido guiado de 90 segundos</h2>
+        <p id="demoStageCopy">Carga la demo, avanza por los módulos clave y muestra por qué LearnBridge es más que una respuesta generada.</p>
+      </div>
+      <div class="demo-rail" id="demoRail" aria-label="Pasos de presentación">
+        <button type="button" class="demo-step active" data-demo-step="0">1</button>
+        <button type="button" class="demo-step" data-demo-step="1">2</button>
+        <button type="button" class="demo-step" data-demo-step="2">3</button>
+        <button type="button" class="demo-step" data-demo-step="3">4</button>
+        <button type="button" class="demo-step" data-demo-step="4">5</button>
+      </div>
+      <div class="demo-actions">
+        <button id="guidedDemoButton" type="button">Iniciar demo guiada</button>
+        <button id="nextDemoStepButton" class="secondary" type="button">Siguiente paso</button>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <aside class="control-panel" aria-label="Learning setup">
+        <section class="project-repository" aria-label="Project repository">
+          <div class="repo-head">
+            <div>
+              <span>Project repository</span>
+              <strong id="activeProjectName">Proyecto sin título</strong>
+            </div>
+            <button id="newProjectButton" type="button" class="secondary">New</button>
+          </div>
+          <label for="projectTitleInput">Project folder name</label>
+          <input id="projectTitleInput" value="Energy Transition demo">
+          <div id="projectList" class="project-list"></div>
+        </section>
+
+        <label for="topicInput">Topic or question</label>
+        <textarea id="topicInput" rows="6" placeholder="Example: Explain sea level rise, inflation, photosynthesis, derivatives, or how vaccines work."></textarea>
+
+        <div class="field-grid">
+          <div>
+            <label for="materialSelect">Material type</label>
+            <select id="materialSelect">
+              <option value="Concept">Concept / topic</option>
+              <option value="Book" selected>Book / reading</option>
+              <option value="Article">Article / report</option>
+              <option value="Speech">Speech / presentation</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="sourceInput">Book, author, or source notes</label>
+        <textarea id="sourceInput" rows="4" placeholder="Example: paste source notes, article excerpts, syllabus, or what you already know."></textarea>
+
+        <section class="upload-box" aria-label="Upload reading file">
+          <div>
+            <label for="bookUpload">Upload local reading file</label>
+            <p>PDF, Word, TXT, Markdown, or EPUB from your device.</p>
+          </div>
+          <input id="bookUpload" type="file" accept=".pdf,.doc,.docx,.txt,.md,.epub,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown">
+          <div id="uploadStatus" class="upload-status">No file loaded.</div>
+        </section>
+
+        <select id="levelSelect" hidden aria-hidden="true">
+          <option value="Child">Child</option>
+          <option value="High school">High school</option>
+          <option value="Adult / casual learner" selected>Adult / casual learner</option>
+          <option value="Beginner adult">Beginner adult</option>
+          <option value="University">University</option>
+          <option value="Postgraduate">Postgraduate</option>
+        </select>
+        <div class="field-grid">
+          <div>
+            <label for="profileSelect">Learner profile</label>
+            <select id="profileSelect">
+              <option value="Child learner">Child learner</option>
+              <option value="General learner" selected>General learner</option>
+              <option value="Curious adult / general information">Curious adult / general information</option>
+              <option value="Student">Student</option>
+              <option value="University student">University student</option>
+              <option value="Postgraduate / researcher">Postgraduate / researcher</option>
+              <option value="Teacher / instructor">Teacher / instructor</option>
+              <option value="Academic / researcher">Academic / researcher</option>
+              <option value="Business owner">Business owner</option>
+              <option value="Technical professional">Technical professional</option>
+              <option value="Creative / communicator">Creative / communicator</option>
+              <option value="Home / everyday learner">Home / everyday learner</option>
+            </select>
+          </div>
+        </div>
+        <div id="modePresetPanel" class="mode-preset-panel" aria-live="polite"></div>
+
+        <label for="answerInput">Explain it back in your own words</label>
+        <textarea id="answerInput" rows="5" placeholder="After reading the explanation, write what you understood. The clinic will find gaps and confusion."></textarea>
+
+        <div class="button-row">
+          <button id="runButton" type="button">Build learning path</button>
+          <button id="resetButton" class="secondary" type="button">Reset</button>
+        </div>
+      </aside>
+
+      <section class="results" aria-label="LearnBridge output">
+        <section class="session-guide" aria-label="Guided learning session">
+          <div class="session-step active" data-guide="understand">1 Understand</div>
+          <div class="session-step" data-guide="media">2 See</div>
+          <div class="session-step" data-guide="tools">3 Note</div>
+          <div class="session-step" data-guide="exam">4 Practice</div>
+          <div class="session-step" data-guide="teach">5 Teach</div>
+        </section>
+        <section class="progress-strip" aria-label="Progress and mode">
+          <div><span>Mode</span><strong id="modeLabel">General</strong></div>
+          <div><span>Mastery</span><strong id="masteryLabel">0%</strong></div>
+          <div><span>Badges</span><strong id="badgeLabel">0</strong></div>
+        </section>
+        <nav class="tabs" aria-label="Learning modules">
+          <button class="tab active" type="button" data-tab="understand">Understand</button>
+          <button class="tab" type="button" data-tab="kid">Kid</button>
+          <button class="tab" type="button" data-tab="clinic">Clinic</button>
+          <button class="tab" type="button" data-tab="proof">Proof</button>
+          <button class="tab" type="button" data-tab="exam">Exam</button>
+          <button class="tab" type="button" data-tab="teach">Teach</button>
+          <button class="tab" type="button" data-tab="media">Media</button>
+          <button class="tab" type="button" data-tab="play">Play</button>
+          <button class="tab" type="button" data-tab="tools">Tools</button>
+          <button class="tab" type="button" data-tab="planner">Planner</button>
+        </nav>
+
+        <section id="understandPanel" class="panel active">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Adaptive Understanding</span>
+              <h3 id="explainTitle">Ask a question to begin.</h3>
+            </div>
+            <span id="readingLevel" class="pill">Adaptive</span>
+          </div>
+          <p id="plainExplanation" class="main-copy">LearnBridge will produce a direct explanation matched to the selected level, audience, material type, and learning goal.</p>
+          <div id="audiencePanel" class="audience-panel" aria-label="Audience mode focus"></div>
+          <div id="learningOSPanel" class="learning-os-panel" aria-label="Learning operating system"></div>
+          <div class="reading-map" id="readingMap" aria-label="Reading comprehension map"></div>
+          <div class="card-grid">
+            <article>
+              <h4>Idea central</h4>
+              <p id="simpleAnalogy">La idea esencial aparecerá aquí con lenguaje claro.</p>
+            </article>
+            <article>
+              <h4>Ejemplo práctico</h4>
+              <p id="localAnalogy">Aquí aparecerá un ejemplo, paso, escena o caso de uso relevante.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="kidPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Kid Mode</span>
+              <h3>Step-by-step learning with drawing, simple words, and playful missions.</h3>
+            </div>
+            <span class="pill">Friendly path</span>
+          </div>
+          <div class="kid-layout">
+            <article class="kid-card big">
+              <span class="kid-badge">1</span>
+              <div class="kid-character owl">Owl</div>
+              <h4>Tell me the idea</h4>
+              <p id="kidIdea">Choose Child level and build a path to see a simpler explanation here.</p>
+            </article>
+            <article class="kid-card">
+              <span class="kid-badge">2</span>
+              <div class="kid-character turtle">Turtle</div>
+              <h4>Draw what you understood</h4>
+              <p>Use the sketch pad in Tools. In the final app this canvas appears bigger for children.</p>
+            </article>
+            <article class="kid-card">
+              <span class="kid-badge">3</span>
+              <div class="kid-character fox">Fox</div>
+              <h4>Mini mission</h4>
+              <p id="kidMission">Answer one tiny question, then explain it to someone at home.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="clinicPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Misconception Clinic</span>
+              <h3>What did the learner really understand?</h3>
+            </div>
+            <span id="understandingScore" class="pill">--</span>
+          </div>
+          <div id="clinicOutput" class="stack"></div>
+        </section>
+
+        <section id="proofPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">ProofTutor</span>
+              <h3>Facts, inferences, confidence, and defense notes.</h3>
+            </div>
+            <span class="pill">Evidence-aware</span>
+          </div>
+          <div id="proofOutput" class="stack"></div>
+          <div id="sourceLedger" class="source-ledger" aria-label="Source and trust ledger"></div>
+          <div id="mythCheckOutput" class="myth-check" aria-label="Myth, fake news, and popular belief check"></div>
+        </section>
+
+        <section id="examPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Exam Simulator With Memory</span>
+              <h3>Practice questions that remember weak points.</h3>
+            </div>
+            <span id="memoryLabel" class="pill">No weak points yet</span>
+          </div>
+          <div id="examOutput" class="question-list"></div>
+          <div id="flashcardDeck" class="flashcard-deck" aria-label="Flashcard-style practice"></div>
+        </section>
+
+        <section id="teachPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Teacher in a Box</span>
+              <h3>Turn understanding into a class for others.</h3>
+            </div>
+            <span class="pill">Lesson-ready</span>
+          </div>
+          <div id="lessonOutput" class="lesson"></div>
+          <div id="demoScriptOutput" class="demo-script"></div>
+        </section>
+
+        <section id="mediaPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Visual Encyclopedia</span>
+              <h3>Images, diagrams, steps, and video-ready teaching scenes.</h3>
+            </div>
+            <span id="mediaModeLabel" class="pill">Adaptive media</span>
+          </div>
+          <div class="media-layout">
+            <section>
+              <h4>Visual explanation board</h4>
+              <div id="visualBoard" class="visual-board"></div>
+            </section>
+            <section>
+              <h4>Interactive media pack</h4>
+              <div id="mediaCards" class="media-cards"></div>
+            </section>
+            <section class="storyboard-section">
+              <h4>Video storyboard</h4>
+              <div id="storyboardOutput" class="storyboard"></div>
+            </section>
+          </div>
+          <section class="mindmap-section" aria-label="Editable visual summary and mind map">
+            <div class="section-title-row">
+              <div>
+                <span class="mindmap-label">Síntesis editable</span>
+                <h4>Cuadro sinóptico / mapa mental</h4>
+              </div>
+              <span class="pill">Editable + interactivo</span>
+            </div>
+            <div id="mindMapOutput" class="mind-map"></div>
+            <p class="mindmap-note">Edita cualquier bloque. Pasa el mouse sobre un nodo para ver rutas de profundización, fuentes o contraste de ideas.</p>
+          </section>
+        </section>
+
+        <section id="playPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Learning Playground</span>
+              <h3>Quiz, puzzle, maze, and matching missions for the current topic.</h3>
+            </div>
+            <span class="pill">Kid fun</span>
+          </div>
+          <div class="play-layout">
+            <article class="play-card">
+              <div class="kid-character bull">Lucas Bull</div>
+              <h4>Professor Lucas' Quiz</h4>
+              <p id="kidQuiz">Lucas has one exam question ready.</p>
+              <button id="kidQuizButton" type="button">Answer quiz</button>
+            </article>
+            <article class="play-card">
+              <div class="kid-character elephant">Ella Elephant</div>
+              <h4>Ella's Picture Puzzle</h4>
+              <p id="kidPuzzle">Arrange the idea pieces in the right order.</p>
+              <div id="puzzleTiles" class="puzzle-tiles"></div>
+            </article>
+            <article class="play-card">
+              <div class="kid-character raccoon">Milo Raccoon</div>
+              <h4>Milo's Paper Maze</h4>
+              <p id="kidMaze">Carry the notes through the maze to the answer.</p>
+              <div id="mazeBoard" class="maze-board"></div>
+            </article>
+            <article class="play-card">
+              <div class="kid-character dolphin">Dina Dolphin</div>
+              <h4>Dina's Match Game</h4>
+              <p id="kidMatch">Match the idea with the example.</p>
+              <div id="matchGame" class="match-game"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="toolsPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Study Workspace</span>
+              <h3>Notes, drawing, calculator, timer, and project history.</h3>
+            </div>
+            <span id="saveLabel" class="pill">Autosave ready</span>
+          </div>
+
+          <div class="tool-grid">
+            <article class="tool-card notes-card">
+              <h4>Project Notes</h4>
+              <textarea id="notesInput" rows="12" placeholder="Write your own notes for this specific project."></textarea>
+            </article>
+
+            <article class="tool-card">
+              <div class="tool-card-head">
+                <h4>Calculator</h4>
+                <button id="floatToolsButton" class="secondary" type="button">Float tools</button>
+              </div>
+              <label for="calculatorMode">Calculator type</label>
+              <select id="calculatorMode">
+                <option value="basic">Basic</option>
+                <option value="scientific" selected>Scientific</option>
+                <option value="financial">Financial</option>
+              </select>
+              <input id="calcInput" placeholder="Example: sin(30) + sqrt(16) + 2^3">
+              <div class="calc-buttons">
+                <button type="button" data-calc="7">7</button>
+                <button type="button" data-calc="8">8</button>
+                <button type="button" data-calc="9">9</button>
+                <button type="button" data-calc="/">÷</button>
+                <button type="button" data-calc="sin(">sin</button>
+                <button type="button" data-calc="4">4</button>
+                <button type="button" data-calc="5">5</button>
+                <button type="button" data-calc="6">6</button>
+                <button type="button" data-calc="*">×</button>
+                <button type="button" data-calc="sqrt(">√</button>
+                <button type="button" data-calc="1">1</button>
+                <button type="button" data-calc="2">2</button>
+                <button type="button" data-calc="3">3</button>
+                <button type="button" data-calc="-">−</button>
+                <button type="button" data-calc="^">^</button>
+                <button type="button" data-calc="0">0</button>
+                <button type="button" data-calc=".">.</button>
+                <button type="button" data-calc="("> ( </button>
+                <button type="button" data-calc=")"> ) </button>
+                <button type="button" data-calc="+">+</button>
+              </div>
+              <div id="scientificHelpers" class="scientific-helpers">
+                <button type="button" data-calc="cos(">cos</button>
+                <button type="button" data-calc="tan(">tan</button>
+                <button type="button" data-calc="asin(">asin</button>
+                <button type="button" data-calc="acos(">acos</button>
+                <button type="button" data-calc="atan(">atan</button>
+                <button type="button" data-calc="log(">log</button>
+                <button type="button" data-calc="ln(">ln</button>
+                <button type="button" data-calc="exp(">exp</button>
+                <button type="button" data-calc="abs(">abs</button>
+                <button type="button" data-calc="floor(">floor</button>
+                <button type="button" data-calc="ceil(">ceil</button>
+                <button type="button" data-calc="round(">round</button>
+                <button type="button" data-calc="pi">π</button>
+                <button type="button" data-calc="e">e</button>
+                <button type="button" data-calc="!">n!</button>
+                <button type="button" data-calc="%">%</button>
+                <button type="button" data-calc="rand()">rand</button>
+                <button type="button" data-calc=",">,</button>
+              </div>
+              <div id="financeHelpers" class="finance-helpers">
+                <button type="button" data-finance="payment">Payment</button>
+                <button type="button" data-finance="future">Future value</button>
+                <button type="button" data-finance="present">Present value</button>
+              </div>
+              <div class="button-row">
+                <button id="calcSolveButton" type="button">Solve</button>
+                <button id="calcClearButton" class="secondary" type="button">Clear</button>
+              </div>
+              <p id="calcOutput" class="tool-output">Result appears here.</p>
+            </article>
+
+            <article class="tool-card">
+              <h4>Study Schedule + Alarm</h4>
+              <label for="studyMinutesInput">Focus block minutes</label>
+              <input id="studyMinutesInput" type="number" min="1" max="180" value="25">
+              <div id="timerDisplay" class="timer-display">00:00</div>
+              <div class="button-row three">
+                <button id="timerStartButton" type="button">Start</button>
+                <button id="timerLapButton" class="secondary" type="button">Lap</button>
+                <button id="timerResetButton" class="secondary" type="button">Reset</button>
+              </div>
+              <div id="studySchedule" class="study-schedule"></div>
+              <div id="lapList" class="lap-list"></div>
+            </article>
+
+            <article class="tool-card sketch-card">
+              <h4>Handwriting / Sketch Pad</h4>
+              <canvas id="sketchCanvas" width="1400" height="760"></canvas>
+              <div class="button-row">
+                <button id="saveSketchButton" type="button">Save sketch</button>
+                <button id="clearSketchButton" class="secondary" type="button">Clear sketch</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="plannerPanel" class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="module-label">Learning Planner</span>
+              <h3>Your study route, calendar, reminders, and learning record.</h3>
+            </div>
+            <span id="plannerSummary" class="pill">0 plans</span>
+          </div>
+
+          <div class="planner-layout">
+            <section class="planner-card">
+              <h4>This Week Learned</h4>
+              <div id="weeklyLearning" class="learning-feed"></div>
+            </section>
+
+            <section class="planner-card">
+              <h4>Add Study Reminder</h4>
+              <label for="reminderTitleInput">What should LearnBridge remind you?</label>
+              <input id="reminderTitleInput" placeholder="Physics exam, reading comprehension, family recipe...">
+              <div class="field-grid">
+                <div>
+                  <label for="reminderDateInput">Date</label>
+                  <input id="reminderDateInput" type="date">
+                </div>
+                <div>
+                  <label for="reminderTimeInput">Time</label>
+                  <input id="reminderTimeInput" type="time">
+                </div>
+              </div>
+              <label for="reminderNoteInput">Notes</label>
+              <textarea id="reminderNoteInput" rows="4" placeholder="Remember what to study, teach, cook, read, or prepare."></textarea>
+              <button id="addReminderButton" type="button">Add reminder</button>
+            </section>
+
+            <section class="planner-card wide">
+              <h4>Monthly Calendar</h4>
+              <div id="calendarGrid" class="calendar-grid"></div>
+            </section>
+
+            <section class="planner-card wide">
+              <h4>Upcoming Agenda</h4>
+              <div id="agendaList" class="agenda-list"></div>
+            </section>
+
+            <section class="planner-card wide">
+              <h4>Learning Self-Assessment</h4>
+              <div class="assessment-grid">
+                <label>Understanding <input id="scoreUnderstanding" type="range" min="0" max="100" value="60"></label>
+                <label>Confidence <input id="scoreConfidence" type="range" min="0" max="100" value="50"></label>
+                <label>Ready to teach <input id="scoreTeach" type="range" min="0" max="100" value="40"></label>
+              </div>
+              <button id="saveAssessmentButton" type="button">Save assessment to project</button>
+            </section>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <footer class="app-footer">
+      <span id="authorsLine">Concepto y desarrollo: Alberto Campos + Codex.</span>
+    </footer>
+
+    <aside class="chat-dock" aria-label="Interactive study chat">
+      <button id="chatToggle" type="button">Ask LearnBridge</button>
+      <section id="chatPanel" class="chat-panel">
+        <div class="chat-head">
+          <strong>Live question</strong>
+          <span>Interrupt any module</span>
+        </div>
+        <div id="chatLog" class="chat-log"></div>
+        <div class="chat-input-row">
+          <input id="chatInput" placeholder="Ask a doubt about the current topic...">
+          <button id="chatVoiceButton" class="secondary icon-button" type="button" title="Dictate question">Mic</button>
+          <button id="chatSendButton" type="button">Send</button>
+        </div>
+      </section>
+    </aside>
+
+    <section id="helpModal" class="help-modal" aria-hidden="true" role="dialog" aria-label="Manual de usuario">
+      <div class="help-card">
+        <div class="help-head">
+          <div>
+            <span id="helpEyebrow">Manual rápido</span>
+            <h2 id="helpTitle">Cómo usar LearnBridge</h2>
+          </div>
+          <button id="closeHelpButton" class="secondary" type="button">Cerrar</button>
+        </div>
+        <div id="helpContent" class="help-content"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
+
+
+
