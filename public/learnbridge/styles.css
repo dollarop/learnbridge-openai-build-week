@@ -835,6 +835,52 @@ body.mode-technical .pitch-grid p {
   backdrop-filter: blur(18px);
 }
 
+.difference-disclosure {
+  padding: 0;
+  overflow: hidden;
+}
+
+.difference-disclosure summary {
+  cursor: pointer;
+  min-height: 58px;
+  padding: 18px 22px;
+  color: white;
+  border-radius: 28px;
+  background: linear-gradient(135deg, var(--blue), var(--leaf));
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 950;
+  list-style: none;
+}
+
+.difference-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.difference-disclosure summary::after {
+  content: "+";
+  float: right;
+  font-weight: 900;
+}
+
+.difference-disclosure[open] summary::after {
+  content: "−";
+}
+
+.difference-disclosure .edge-head,
+.difference-disclosure .edge-grid,
+.difference-disclosure .maturity-strip {
+  margin-inline: 22px;
+}
+
+.difference-disclosure .edge-head {
+  margin-top: 22px;
+}
+
+.difference-disclosure .maturity-strip {
+  margin-top: 16px;
+  margin-bottom: 22px;
+}
+
 .edge-head {
   display: grid;
   grid-template-columns: minmax(260px, .8fr) minmax(280px, 1fr);
@@ -955,7 +1001,7 @@ body.mode-technical .pitch-grid p {
 }
 
 .voice-console {
-  display: grid;
+  display: none;
   grid-template-columns: minmax(260px, .85fr) minmax(360px, 1.2fr) auto;
   gap: 18px;
   align-items: center;
@@ -968,6 +1014,10 @@ body.mode-technical .pitch-grid p {
     rgba(255, 255, 255, .82);
   box-shadow: 0 18px 48px rgba(19, 31, 49, .14);
   backdrop-filter: blur(18px);
+}
+
+body.voice-open .voice-console {
+  display: grid;
 }
 
 .voice-console h3 {
@@ -2146,15 +2196,14 @@ body.mode-technical .demo-script-card li {
 }
 
 #toolsPanel {
-  display: block;
+  display: none;
   position: fixed;
-  left: 18px;
-  right: auto;
-  bottom: 18px;
-  z-index: 24;
-  width: min(520px, calc(100vw - 36px));
-  max-height: 68px;
-  overflow: hidden;
+  right: 18px;
+  bottom: 128px;
+  z-index: 22;
+  width: min(430px, calc(100vw - 36px));
+  max-height: min(76vh, 720px);
+  overflow: auto;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: rgba(255, 250, 240, 0.96);
@@ -2165,11 +2214,8 @@ body.mode-technical .demo-script-card li {
   transform: none;
 }
 
-#toolsPanel:hover,
-#toolsPanel:focus-within {
-  width: min(760px, calc(100vw - 36px));
-  max-height: min(78vh, 760px);
-  overflow: auto;
+body.tools-open #toolsPanel {
+  display: block;
   box-shadow: 0 26px 70px rgba(26, 35, 31, .30);
 }
 
@@ -2207,17 +2253,6 @@ body.mode-technical .demo-script-card li {
   min-height: 420px;
 }
 
-#toolsPanel:not(:hover):not(:focus-within) .panel-head h3 {
-  max-width: 280px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-#toolsPanel:not(:hover):not(:focus-within) .tool-grid {
-  display: none;
-}
-
 #floatToolsButton {
   display: none;
 }
@@ -2228,11 +2263,32 @@ body.mode-technical .demo-script-card li {
   bottom: 18px;
   z-index: 20;
   width: min(380px, calc(100vw - 36px));
+  display: grid;
+  gap: 8px;
 }
 
-#chatToggle {
+#chatToggle,
+#toolsToggle {
   width: 100%;
   box-shadow: 0 12px 28px rgba(26, 35, 31, 0.24);
+}
+
+#toolsToggle {
+  background: var(--blue);
+}
+
+body.tools-open #toolsToggle {
+  background: var(--brick);
+}
+
+.listen-section-btn {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: white;
+  background: var(--blue);
+  font-size: 13px;
+  box-shadow: none;
 }
 
 .chat-panel {

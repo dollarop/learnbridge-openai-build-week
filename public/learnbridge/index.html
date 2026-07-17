@@ -13,6 +13,7 @@
       <div class="language-buttons">
         <button class="language-chip" type="button" data-language="Spanish" aria-pressed="true">Español</button>
         <button class="language-chip" type="button" data-language="English" aria-pressed="false">English</button>
+        <button id="audioToggle" class="secondary help-button" type="button">Audio</button>
         <button id="helpButton" class="secondary help-button" type="button">Ayuda</button>
       </div>
     </section>
@@ -140,7 +141,8 @@
       </article>
     </section>
 
-    <section class="competitive-edge" aria-label="Ventaja competitiva">
+    <details class="competitive-edge difference-disclosure" aria-label="Ventaja competitiva">
+      <summary>Lo que LearnBridge hace distinto</summary>
       <div class="edge-head">
         <p class="eyebrow">Ventaja para jurado</p>
         <h2>Lo que LearnBridge hace distinto</h2>
@@ -155,26 +157,26 @@
         <article><span>06</span><strong>Workspace persistente</strong><p>Notas, dibujos, agenda, calculadoras e historial por proyecto.</p></article>
         <article><span>07</span><strong>Multimodal</strong><p>Texto, voz, visuales, práctica, examen y paquete compartible.</p></article>
       </div>
-    </section>
 
-    <section class="maturity-strip" aria-label="Madurez del producto">
-      <article>
-        <strong>Sources</strong>
-        <p>Source ledger, evidence labels, myth contrast and export history.</p>
-      </article>
-      <article>
-        <strong>Audio</strong>
-        <p>Voice narration, dictation-ready chat and accessibility controls.</p>
-      </article>
-      <article>
-        <strong>Practice</strong>
-        <p>Exam memory, flashcard-style drills and teach-back checks.</p>
-      </article>
-      <article>
-        <strong>Fast Solve</strong>
-        <p>Quick answer first, then proof, map, practice and lesson pack.</p>
-      </article>
-    </section>
+      <section class="maturity-strip" aria-label="Madurez del producto">
+        <article>
+          <strong>Sources</strong>
+          <p>Source ledger, evidence labels, myth contrast and export history.</p>
+        </article>
+        <article>
+          <strong>Audio</strong>
+          <p>Voice narration, dictation-ready chat and accessibility controls.</p>
+        </article>
+        <article>
+          <strong>Practice</strong>
+          <p>Exam memory, flashcard-style drills and teach-back checks.</p>
+        </article>
+        <article>
+          <strong>Fast Solve</strong>
+          <p>Quick answer first, then proof, map, practice and lesson pack.</p>
+        </article>
+      </section>
+    </details>
 
     <section class="voice-console" aria-label="Voz y accesibilidad">
       <div>
@@ -715,6 +717,7 @@
     </footer>
 
     <aside class="chat-dock" aria-label="Interactive study chat">
+      <button id="toolsToggle" type="button">Herramientas</button>
       <button id="chatToggle" type="button">Ask LearnBridge</button>
       <section id="chatPanel" class="chat-panel">
         <div class="chat-head">

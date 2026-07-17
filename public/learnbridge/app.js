@@ -49,10 +49,12 @@ const mythCheckOutput = document.querySelector("#mythCheckOutput");
 const mindMapOutput = document.querySelector("#mindMapOutput");
 const flashcardDeck = document.querySelector("#flashcardDeck");
 const helpButton = document.querySelector("#helpButton");
+const audioToggle = document.querySelector("#audioToggle");
 const helpModal = document.querySelector("#helpModal");
 const closeHelpButton = document.querySelector("#closeHelpButton");
 const helpContent = document.querySelector("#helpContent");
 const floatToolsButton = document.querySelector("#floatToolsButton");
+const toolsToggle = document.querySelector("#toolsToggle");
 const voiceSelect = document.querySelector("#voiceSelect");
 const voiceAccentSelect = document.querySelector("#voiceAccentSelect");
 const voiceToneSelect = document.querySelector("#voiceToneSelect");
@@ -905,11 +907,25 @@ function speakText(textToSpeak) {
 }
 
 function currentNarrationText() {
-  const activePanel = document.querySelector(".tab-panel.active");
+  const activePanel = document.querySelector(".panel.active:not(#toolsPanel)");
   const title = document.querySelector("#explainTitle")?.textContent || "";
   const explanation = document.querySelector("#plainExplanation")?.textContent || "";
   const panelText = activePanel ? activePanel.textContent : "";
   return [title, explanation, panelText].join(". ");
+}
+
+function addSectionListenButtons() {
+  document.querySelectorAll(".panel .panel-head").forEach((head) => {
+    if (head.querySelector(".listen-section-btn")) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "listen-section-btn";
+    button.addEventListener("click", () => {
+      const panel = head.closest(".panel");
+      speakText(panel ? panel.textContent : currentNarrationText());
+    });
+    head.append(button);
+  });
 }
 
 function startVoiceInput() {
@@ -1476,6 +1492,7 @@ function applyUiLanguage() {
   });
   const edge = document.querySelector(".competitive-edge");
   if (edge && ui.competitiveCards) {
+    edge.querySelector("summary").textContent = ui.competitiveTitle;
     edge.querySelector(".eyebrow").textContent = ui.competitiveEyebrow;
     edge.querySelector("h2").textContent = ui.competitiveTitle;
     edge.querySelector(".edge-head p:not(.eyebrow)").textContent = ui.competitiveBody;
@@ -1510,6 +1527,12 @@ function applyUiLanguage() {
   setText("#speakPageButton", "Escuchar explicación", "Listen to explanation");
   setText("#voiceInputButton", "Dictar al chat", "Dictate to chat");
   setText("#stopSpeechButton", "Detener voz", "Stop voice");
+  setText("#audioToggle", document.body.classList.contains("voice-open") ? "Ocultar audio" : "Audio", document.body.classList.contains("voice-open") ? "Hide audio" : "Audio");
+  setText("#toolsToggle", document.body.classList.contains("tools-open") ? "Ocultar herramientas" : "Herramientas", document.body.classList.contains("tools-open") ? "Hide tools" : "Tools");
+  document.querySelectorAll(".listen-section-btn").forEach((button) => {
+    button.textContent = say("Escuchar", "Listen");
+    button.title = say("Escuchar esta sección", "Listen to this section");
+  });
   setOptionLabels(voiceAccentSelect, isSpanish() ? {
     "es-MX": "Español México",
     "es-ES": "Español España",
@@ -1741,6 +1764,11 @@ function applyUiLanguage() {
   });
   if (voiceAvailable()) populateVoices();
   renderHelp();
+  addSectionListenButtons();
+  document.querySelectorAll(".listen-section-btn").forEach((button) => {
+    button.textContent = say("Escuchar", "Listen");
+    button.title = say("Escuchar esta sección", "Listen to this section");
+  });
   applyAudienceMode();
   syncCalculatorMode();
 }
@@ -3190,6 +3218,10 @@ stopSpeechButton.addEventListener("click", () => {
   if (voiceAvailable()) window.speechSynthesis.cancel();
 });
 voiceInputButton.addEventListener("click", startVoiceInput);
+audioToggle.addEventListener("click", () => {
+  document.body.classList.toggle("voice-open");
+  applyUiLanguage();
+});
 chatVoiceButton.addEventListener("click", () => {
   chatPanel.classList.add("open");
   startVoiceInput();
@@ -3317,6 +3349,13 @@ document.querySelector("#loginButton").addEventListener("click", () => {
 document.querySelector("#chatToggle").addEventListener("click", () => {
   chatPanel.classList.toggle("open");
 });
+toolsToggle.addEventListener("click", () => {
+  document.body.classList.toggle("tools-open");
+  if (document.body.classList.contains("tools-open")) {
+    notesInput.focus();
+  }
+  applyUiLanguage();
+});
 document.querySelector("#chatSendButton").addEventListener("click", answerLiveQuestion);
 chatInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") answerLiveQuestion();
@@ -3367,7 +3406,7 @@ document.querySelectorAll("[data-finance]").forEach((button) => {
   });
 });
 floatToolsButton.addEventListener("click", () => {
-  document.body.classList.toggle("tools-floating");
+  document.body.classList.toggle("tools-open");
   applyUiLanguage();
 });
 document.querySelector("#timerStartButton").addEventListener("click", () => {
