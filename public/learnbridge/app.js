@@ -516,7 +516,8 @@ const uiText = {
     showcase: [
       ["Aprende desde una sola pregunta", "La app convierte cualquier tema, libro, archivo o meta en una ruta completa con fuentes, voz, mapas y práctica."],
       ["Comprueba comprensión", "No solo resume: pregunta, detecta huecos, contrasta mitos y exige explicar con palabras propias."],
-      ["Produce material reusable", "Notas, dibujos, calculadora, calendario, clase final y paquete exportable viven dentro del proyecto."]
+      ["Produce material reusable", "Notas, dibujos, calculadora, calendario, clase final y paquete exportable viven dentro del proyecto."],
+      ["Voz accesible", "Escucha cada bloque, ajusta voz, acento, tono, velocidad y entonación, y estudia sin depender solo de la pantalla."]
     ],
     competitiveEyebrow: "Ventaja para jurado",
     competitiveTitle: "Lo que LearnBridge hace distinto",
@@ -571,7 +572,8 @@ const uiText = {
       ["No solo respuestas", "Convierte un tema en un espacio reutilizable con memoria, notas, multimedia, práctica y explicación final."],
       ["Adaptado por rol", "Niño, adulto casual, estudiante, profesor, académico, técnico, negocio, creativo y casa trabajan distinto."],
       ["Primero comprensión", "Diagnostica lo que el usuario entendió, detecta malentendidos y pide probar o enseñar la idea."],
-      ["Fuente + usuario", "Combina archivos cargados con notas, dibujos, temporizador, recordatorios y repositorio de proyectos."]
+      ["Fuente + usuario", "Combina archivos cargados con notas, dibujos, temporizador, recordatorios y repositorio de proyectos."],
+      ["Voz accesible", "Permite escuchar cada bloque con un icono y ajustar voz, acento, tono, velocidad y entonación."]
     ],
     userLabel: "Usuario local",
     passwordLabel: "Contraseña",
@@ -623,7 +625,8 @@ const uiText = {
     showcase: [
       ["Learn from one question", "The app turns any topic, book, file, or goal into a complete path with sources, voice, maps, and practice."],
       ["Prove comprehension", "It does not only summarize: it asks, finds gaps, contrasts myths, and requires teach-back in the learner's words."],
-      ["Create reusable material", "Notes, sketches, calculator, calendar, final lesson, and exportable pack live inside the project."]
+      ["Create reusable material", "Notes, sketches, calculator, calendar, final lesson, and exportable pack live inside the project."],
+      ["Accessible voice", "Listen to each block, adjust voice, accent, tone, speed, and pitch, and study without relying only on the screen."]
     ],
     competitiveEyebrow: "Jury advantage",
     competitiveTitle: "What LearnBridge does differently",
@@ -669,7 +672,8 @@ const uiText = {
       ["Not just answers", "Turns a topic into a reusable workspace with memory, notes, multimedia, practice, and final explanation."],
       ["Role-adaptive", "Child, casual adult, student, teacher, academic, technical, business, creative, and home modes behave differently."],
       ["Comprehension first", "Diagnoses what the user understood, detects misconceptions, and asks them to prove or teach the idea."],
-      ["Source + user", "Combines uploaded files with notes, sketches, timer, reminders, and a project repository."]
+      ["Source + user", "Combines uploaded files with notes, sketches, timer, reminders, and a project repository."],
+      ["Accessible voice", "Lets users play each block from an icon and adjust voice, accent, tone, speed, and pitch."]
     ],
     userLabel: "Local user",
     passwordLabel: "Password",
@@ -860,7 +864,7 @@ function populateVoices() {
   if (selected && Array.from(voiceSelect.options).some((option) => option.value === selected)) {
     voiceSelect.value = selected;
   }
-  voiceSupportStatus.textContent = say("Narración lista. Las voces dependen del navegador y del sistema.", "Narration ready. Voices depend on the browser and operating system.");
+  voiceSupportStatus.textContent = say("Configura la voz general. Cada bloque se escucha desde su icono 🔉.", "Set the global voice. Each block plays from its 🔉 icon.");
   voiceInputButton.disabled = !recognitionAvailable();
   if (chatVoiceButton) chatVoiceButton.disabled = !recognitionAvailable();
   if (!recognitionAvailable()) {
@@ -915,17 +919,53 @@ function currentNarrationText() {
 }
 
 function addSectionListenButtons() {
-  document.querySelectorAll(".panel .panel-head").forEach((head) => {
-    if (head.querySelector(".listen-section-btn")) return;
+  document.querySelectorAll(".listen-section-btn").forEach((button) => button.remove());
+  document.querySelectorAll(".listen-enabled").forEach((node) => node.classList.remove("listen-enabled"));
+  const selectors = [
+    "#plainExplanation",
+    "#simpleAnalogy",
+    "#localAnalogy",
+    "#learningOSPanel > article",
+    "#sourceLedger > article",
+    "#readingMap > div",
+    ".panel .card-grid > article",
+    "#clinicOutput > article",
+    "#proofOutput > article",
+    "#examOutput > article",
+    "#flashcardDeck .flashcard",
+    "#lessonOutput > article",
+    "#demoScriptOutput > article",
+    "#mediaCards > article",
+    "#storyboardOutput > article",
+    "#mythCheckOutput > article",
+    "#mythCheckOutput .myth-grid > div",
+    "#mindMapOutput .mind-node",
+    ".planner-card",
+    ".tool-card"
+  ];
+  document.querySelectorAll(selectors.join(",")).forEach((block) => {
+    const spokenText = block.textContent.replace(/\s+/g, " ").trim();
+    if (spokenText.length < 24 || block.querySelector(":scope > .listen-section-btn")) return;
+    block.classList.add("listen-enabled");
     const button = document.createElement("button");
     button.type = "button";
     button.className = "listen-section-btn";
-    button.addEventListener("click", () => {
-      const panel = head.closest(".panel");
-      speakText(panel ? panel.textContent : currentNarrationText());
+    button.textContent = "🔉";
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      speakText(spokenText);
     });
-    head.append(button);
+    block.append(button);
   });
+}
+
+function syncVoiceAccentOptions() {
+  const current = voiceAccentSelect.value;
+  const options = isSpanish()
+    ? [["es-MX", "Español México"], ["es-ES", "Español España"]]
+    : [["en-US", "English US"], ["en-GB", "English UK"]];
+  voiceAccentSelect.innerHTML = options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+  voiceAccentSelect.value = options.some(([value]) => value === current) ? current : options[0][0];
 }
 
 function startVoiceInput() {
@@ -1513,10 +1553,9 @@ function applyUiLanguage() {
   document.querySelector("#nextDemoStepButton").textContent = ui.nextDemoStep || "Next step";
   renderGuidedDemoStep(guidedDemoIndex, false);
   helpButton.textContent = ui.help || "Help";
-  setText(".voice-console .eyebrow", "Voz accesible", "Accessible voice");
-  setText(".voice-console h3", "Escucha, dicta y estudia sin depender solo de la pantalla.", "Listen, dictate, and study without relying only on the screen.");
+  syncVoiceAccentOptions();
   voiceSupportStatus.textContent = voiceAvailable()
-    ? say("Narración lista. Las voces dependen del navegador y del sistema.", "Narration ready. Voices depend on the browser and operating system.")
+    ? say("Configura la voz general. Cada bloque se escucha desde su icono 🔉.", "Set the global voice. Each block plays from its 🔉 icon.")
     : say("Este navegador no tiene narración integrada.", "This browser does not provide built-in narration.");
   setText('label[for="voiceSelect"]', "Voz", "Voice");
   setText('label[for="voiceAccentSelect"]', "Acento", "Accent");
@@ -1530,19 +1569,9 @@ function applyUiLanguage() {
   setText("#audioToggle", document.body.classList.contains("voice-open") ? "Ocultar audio" : "Audio", document.body.classList.contains("voice-open") ? "Hide audio" : "Audio");
   setText("#toolsToggle", document.body.classList.contains("tools-open") ? "Ocultar herramientas" : "Herramientas", document.body.classList.contains("tools-open") ? "Hide tools" : "Tools");
   document.querySelectorAll(".listen-section-btn").forEach((button) => {
-    button.textContent = say("Escuchar", "Listen");
-    button.title = say("Escuchar esta sección", "Listen to this section");
-  });
-  setOptionLabels(voiceAccentSelect, isSpanish() ? {
-    "es-MX": "Español México",
-    "es-ES": "Español España",
-    "en-US": "Inglés EE. UU.",
-    "en-GB": "Inglés Reino Unido"
-  } : {
-    "es-MX": "Spanish Mexico",
-    "es-ES": "Spanish Spain",
-    "en-US": "English US",
-    "en-GB": "English UK"
+    button.textContent = "🔉";
+    button.title = say("Escuchar este bloque", "Listen to this block");
+    button.setAttribute("aria-label", say("Escuchar este bloque", "Listen to this block"));
   });
   setOptionLabels(voiceToneSelect, isSpanish() ? {
     neutral: "Neutral",
@@ -1766,8 +1795,9 @@ function applyUiLanguage() {
   renderHelp();
   addSectionListenButtons();
   document.querySelectorAll(".listen-section-btn").forEach((button) => {
-    button.textContent = say("Escuchar", "Listen");
-    button.title = say("Escuchar esta sección", "Listen to this section");
+    button.textContent = "🔉";
+    button.title = say("Escuchar este bloque", "Listen to this block");
+    button.setAttribute("aria-label", say("Escuchar este bloque", "Listen to this block"));
   });
   applyAudienceMode();
   syncCalculatorMode();
@@ -2421,6 +2451,7 @@ function renderScenarioPath(scenario) {
   document.querySelector("#kidMission").textContent = say("Misión: dibuja una imagen que muestre la cadena de causa y efecto más importante del tema.", "Mission: draw one picture that shows the most important cause-and-effect chain in this topic.");
   stateLabel.textContent = say("Ruta creada", "Path built");
   localizeGeneratedOutput();
+  addSectionListenButtons();
   persistProject(say("demo cargado", "demo scenario loaded"));
   updateProgress();
 }
@@ -2967,6 +2998,7 @@ function buildPath() {
 
   stateLabel.textContent = say("Ruta creada", "Path built");
   localizeGeneratedOutput();
+  addSectionListenButtons();
   if (autoSpeakToggle.checked) {
     speakText(`${document.querySelector("#explainTitle").textContent}. ${document.querySelector("#plainExplanation").textContent}`);
   }

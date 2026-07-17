@@ -117,32 +117,65 @@
       </div>
     </section>
 
-    <section class="landing-showcase" aria-label="Resumen visual del ecosistema">
-      <article class="showcase-card primary">
-        <span class="showcase-icon" aria-hidden="true">◎</span>
-        <div>
-          <strong>Aprende desde una sola pregunta</strong>
-          <p>La app convierte cualquier tema, libro, archivo o meta en una ruta completa con fuentes, voz, mapas y práctica.</p>
-        </div>
-      </article>
-      <article class="showcase-card">
-        <span class="showcase-icon" aria-hidden="true">◌</span>
-        <div>
-          <strong>Comprueba comprensión</strong>
-          <p>No solo resume: pregunta, detecta huecos, contrasta mitos y exige explicar con palabras propias.</p>
-        </div>
-      </article>
-      <article class="showcase-card">
-        <span class="showcase-icon" aria-hidden="true">◇</span>
-        <div>
-          <strong>Produce material reusable</strong>
-          <p>Notas, dibujos, calculadora, calendario, clase final y paquete exportable viven dentro del proyecto.</p>
-        </div>
-      </article>
-    </section>
-
     <details class="competitive-edge difference-disclosure" aria-label="Ventaja competitiva">
       <summary>Lo que LearnBridge hace distinto</summary>
+      <section class="landing-showcase" aria-label="Resumen visual del ecosistema">
+        <article class="showcase-card primary">
+          <span class="showcase-icon" aria-hidden="true">◎</span>
+          <div>
+            <strong>Aprende desde una sola pregunta</strong>
+            <p>La app convierte cualquier tema, libro, archivo o meta en una ruta completa con fuentes, voz, mapas y práctica.</p>
+          </div>
+        </article>
+        <article class="showcase-card">
+          <span class="showcase-icon" aria-hidden="true">◌</span>
+          <div>
+            <strong>Comprueba comprensión</strong>
+            <p>No solo resume: pregunta, detecta huecos, contrasta mitos y exige explicar con palabras propias.</p>
+          </div>
+        </article>
+        <article class="showcase-card">
+          <span class="showcase-icon" aria-hidden="true">◇</span>
+          <div>
+            <strong>Produce material reusable</strong>
+            <p>Notas, dibujos, calculadora, calendario, clase final y paquete exportable viven dentro del proyecto.</p>
+          </div>
+        </article>
+        <article class="showcase-card">
+          <span class="showcase-icon" aria-hidden="true">🔉</span>
+          <div>
+            <strong>Voz accesible</strong>
+            <p>Escucha cada bloque, ajusta voz, acento, tono, velocidad y entonación, y estudia sin depender solo de la pantalla.</p>
+          </div>
+        </article>
+      </section>
+      <section class="defense-strip" aria-label="Diferenciación del producto">
+        <article>
+          <span>1</span>
+          <strong>No solo respuestas</strong>
+          <p>Convierte un tema en un espacio reutilizable con memoria, notas, multimedia, práctica y explicación final.</p>
+        </article>
+        <article>
+          <span>2</span>
+          <strong>Adaptado por rol</strong>
+          <p>Niño, adulto casual, estudiante, profesor, académico, técnico, negocio, creativo y casa trabajan distinto.</p>
+        </article>
+        <article>
+          <span>3</span>
+          <strong>Primero comprensión</strong>
+          <p>Diagnostica lo que el usuario entendió, detecta malentendidos y pide probar o enseñar la idea.</p>
+        </article>
+        <article>
+          <span>4</span>
+          <strong>Fuente + usuario</strong>
+          <p>Combina archivos cargados con notas, dibujos, temporizador, recordatorios y repositorio de proyectos.</p>
+        </article>
+        <article>
+          <span>5</span>
+          <strong>Voz accesible</strong>
+          <p>Permite escuchar cada bloque con un icono y ajustar voz, acento, tono, velocidad y entonación.</p>
+        </article>
+      </section>
       <div class="edge-head">
         <p class="eyebrow">Ventaja para jurado</p>
         <h2>Lo que LearnBridge hace distinto</h2>
@@ -178,12 +211,7 @@
       </section>
     </details>
 
-    <section class="voice-console" aria-label="Voz y accesibilidad">
-      <div>
-        <p class="eyebrow">Voz accesible</p>
-        <h3>Escucha, dicta y estudia sin depender solo de la pantalla.</h3>
-        <p id="voiceSupportStatus">La narración usa las voces disponibles en este navegador.</p>
-      </div>
+    <section class="voice-console" aria-label="Configuración de audio">
       <div class="voice-grid">
         <label for="voiceSelect">Voz</label>
         <select id="voiceSelect">
@@ -209,13 +237,14 @@
         <input id="voicePitchInput" type="range" min="0.75" max="1.35" step="0.05" value="1">
       </div>
       <div class="voice-actions">
-        <label class="toggle-line">
+        <p id="voiceSupportStatus">La narración usa las voces disponibles en este navegador.</p>
+        <label class="toggle-line hidden-control">
           <input id="autoSpeakToggle" type="checkbox">
           <span>Narrar respuestas automáticamente</span>
         </label>
-        <button id="speakPageButton" type="button">Escuchar explicación</button>
-        <button id="voiceInputButton" class="secondary" type="button">Dictar al chat</button>
-        <button id="stopSpeechButton" class="secondary" type="button">Detener voz</button>
+        <button id="speakPageButton" class="hidden-control" type="button">Escuchar explicación</button>
+        <button id="voiceInputButton" class="hidden-control secondary" type="button">Dictar al chat</button>
+        <button id="stopSpeechButton" class="hidden-control secondary" type="button">Detener voz</button>
       </div>
     </section>
 
@@ -225,29 +254,6 @@
         <p>LearnBridge convierte una pregunta, archivo o meta en un espacio completo de aprendizaje: comprensión, multimedia, chat, práctica, notas, planeación y enseñanza.</p>
       </div>
       <button id="sampleButton" type="button">Cargar ejemplo</button>
-    </section>
-
-    <section class="defense-strip" aria-label="Diferenciación del producto">
-      <article>
-        <span>1</span>
-        <strong>No solo respuestas</strong>
-        <p>Convierte un tema en un espacio reutilizable con memoria, notas, multimedia, práctica y explicación final.</p>
-      </article>
-      <article>
-        <span>2</span>
-        <strong>Adaptado por rol</strong>
-        <p>Niño, adulto casual, estudiante, profesor, académico, técnico, negocio, creativo y casa trabajan distinto.</p>
-      </article>
-      <article>
-        <span>3</span>
-        <strong>Primero comprensión</strong>
-        <p>Diagnostica lo que el usuario entendió, detecta malentendidos y pide probar o enseñar la idea.</p>
-      </article>
-      <article>
-        <span>4</span>
-        <strong>Fuente + usuario</strong>
-        <p>Combina archivos cargados con notas, dibujos, temporizador, recordatorios y repositorio de proyectos.</p>
-      </article>
     </section>
 
     <section class="jury-demo" aria-label="Vista guiada para jurado">
