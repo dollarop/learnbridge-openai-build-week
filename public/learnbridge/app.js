@@ -3141,8 +3141,12 @@ function pointerPos(event) {
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => {
+    if (tab.dataset.tab === "tools") {
+      notesInput.focus();
+      return;
+    }
     document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
-    document.querySelectorAll(".panel").forEach((item) => item.classList.remove("active"));
+    document.querySelectorAll(".panel:not(#toolsPanel)").forEach((item) => item.classList.remove("active"));
     tab.classList.add("active");
     document.querySelector(`#${tab.dataset.tab}Panel`).classList.add("active");
     document.querySelectorAll(".session-step").forEach((step) => {
@@ -3153,6 +3157,10 @@ document.querySelectorAll(".tab").forEach((tab) => {
 
 document.querySelectorAll(".session-step").forEach((step) => {
   step.addEventListener("click", () => {
+    if (step.dataset.guide === "tools") {
+      notesInput.focus();
+      return;
+    }
     document.querySelector(`.tab[data-tab="${step.dataset.guide}"]`)?.click();
   });
 });

@@ -1388,7 +1388,7 @@ button:hover {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
   gap: 6px;
   padding: 10px;
   border-bottom: 1px solid var(--line);
@@ -1466,6 +1466,10 @@ body:not(.kid-mode) .tab[data-tab="kid"],
 body:not(.kid-mode) .tab[data-tab="play"],
 body:not(.kid-mode) #kidPanel,
 body:not(.kid-mode) #playPanel {
+  display: none;
+}
+
+.tab[data-tab="tools"] {
   display: none;
 }
 
@@ -2141,7 +2145,8 @@ body.mode-technical .demo-script-card li {
   touch-action: none;
 }
 
-body.tools-floating #toolsPanel {
+#toolsPanel {
+  display: block;
   position: fixed;
   left: 18px;
   right: auto;
@@ -2156,17 +2161,19 @@ body.tools-floating #toolsPanel {
   box-shadow: 0 18px 46px rgba(26, 35, 31, .24);
   transform: none;
   transition: max-height .2s ease, width .2s ease, box-shadow .2s ease;
+  opacity: 1;
+  transform: none;
 }
 
-body.tools-floating #toolsPanel:hover,
-body.tools-floating #toolsPanel:focus-within {
+#toolsPanel:hover,
+#toolsPanel:focus-within {
   width: min(760px, calc(100vw - 36px));
   max-height: min(78vh, 760px);
   overflow: auto;
   box-shadow: 0 26px 70px rgba(26, 35, 31, .30);
 }
 
-body.tools-floating #toolsPanel::before {
+#toolsPanel::before {
   content: attr(data-tools-label);
   position: absolute;
   top: 16px;
@@ -2186,25 +2193,33 @@ body.tools-floating #toolsPanel::before {
   box-shadow: 0 10px 24px rgba(26, 35, 31, .18);
 }
 
-body.tools-floating #toolsPanel .panel-head {
+#toolsPanel .panel-head {
   min-height: 42px;
   padding-right: 132px;
 }
 
-body.tools-floating #toolsPanel .tool-grid {
+#toolsPanel .tool-grid {
   grid-template-columns: 1fr;
   margin-top: 12px;
 }
 
-body.tools-floating #sketchCanvas {
+#sketchCanvas {
   min-height: 420px;
 }
 
-body.tools-floating #toolsPanel:not(:hover):not(:focus-within) .panel-head h3 {
+#toolsPanel:not(:hover):not(:focus-within) .panel-head h3 {
   max-width: 280px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+#toolsPanel:not(:hover):not(:focus-within) .tool-grid {
+  display: none;
+}
+
+#floatToolsButton {
+  display: none;
 }
 
 .chat-dock {
